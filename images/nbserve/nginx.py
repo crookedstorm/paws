@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import os
 
 
-CONFIG = """
+CONFIG = r"""
 # Let nginx automatically determine the number of worker processes
 # to run. This defaults to number of cores on the host.
 worker_processes auto;
@@ -76,7 +76,7 @@ http {
     lua_ssl_verify_depth 10;
 
     # Serve things with appropriate mimetypes
-    include /etc/nginx/mime.types;
+    include /usr/local/openresty/nginx/conf/mime.types;
 
     # This is the 'regular' server, that sees all public
     # traffic and proxies them to the appropriate backend server.
@@ -96,7 +96,7 @@ http {
 
         # Only after the User: redirect! Otherwise our backend can't find the file.
         location ~ ^/paws-public/\d+/.*\.ipynb$ {
-            include /etc/nginx/uwsgi_params;
+            include /usr/local/openresty/nginx/conf/uwsgi_params;
             uwsgi_pass uwsgi://%s:8000;
         }
 
@@ -108,7 +108,7 @@ http {
         }
 
 
-	location /accelredir {
+    location /accelredir {
             internal;
 
             alias /data/project/paws/userhomes;
@@ -159,6 +159,7 @@ http {
 }
 """
 
+
 def get_nameservers(ipv4only=True):
     """
     Return a list of nameservers from parsing /etc/resolv.conf.
@@ -175,6 +176,7 @@ def get_nameservers(ipv4only=True):
         nameservers = [n for n in nameservers if ':' not in n]
     return nameservers
 
+
 with open('/tmp/nginx.conf', 'w') as f:
     # Not using the nicer .format since it gets confused by the { } in the
     # nginx config itself :(
@@ -184,4 +186,4 @@ with open('/tmp/nginx.conf', 'w') as f:
     )
     f.write(CONFIG % params)
 
-os.execl('/usr/sbin/nginx', '/usr/sbin/nginx', '-c', '/tmp/nginx.conf')
+os.execl('/usr/local/openresty/bin/openresty', '/usr/local/openresty/bin/openresty', '-c', '/tmp/nginx.conf')

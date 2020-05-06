@@ -1,20 +1,78 @@
-FROM docker-registry.tools.wmflabs.org/jessie-toollabs
+FROM docker-registry.tools.wmflabs.org/toolforge-python37-sssd-base:latest
 
-RUN echo lol
-RUN echo 'deb http://ftp.debian.org/debian jessie-backports main' >> /etc/apt/sources.list
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    --no-install-recommends libpcre3-dev libgd-dev \
+    libssl-dev perl make build-essential curl \
+    luarocks \
+    unzip
 
-RUN apt-get update
-RUN apt-get install --yes --no-install-recommends -t jessie-backports \
-            nginx-extras \
-            luarocks \
-            unzip \
-            build-essential
+ARG RESTY_VERSION="1.15.8.3"
+ARG RESTY_J="1"
+# ARG RESTY_OPENSSL_VERSION="1.1.1d"
+ARG RESTY_CONFIG_OPTIONS="\
+    --with-compat \
+    --with-file-aio \
+    --with-http_addition_module \
+    --with-http_auth_request_module \
+    --with-http_dav_module \
+    --with-http_flv_module \
+    --with-http_gunzip_module \
+    --with-http_gzip_static_module \
+    --with-http_image_filter_module=dynamic \
+    --with-http_mp4_module \
+    --with-http_random_index_module \
+    --with-http_realip_module \
+    --with-http_secure_link_module \
+    --with-http_slice_module \
+    --with-http_ssl_module \
+    --with-http_stub_status_module \
+    --with-http_sub_module \
+    --with-http_v2_module \
+    --with-http_xslt_module=dynamic \
+    --with-ipv6 \
+    --with-mail \
+    --with-mail_ssl_module \
+    --with-md5-asm \
+    --with-pcre-jit \
+    --with-sha1-asm \
+    --with-stream \
+    --with-stream_ssl_module \
+    --with-threads \
+    --add-module=./ngx-fancyindex \
+    "
+
+RUN cd /tmp \
+    && curl -fSL https://github.com/openresty/openresty/releases/download/v${RESTY_VERSION}/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
+    && tar xzf openresty-${RESTY_VERSION}.tar.gz \
+    && cd /tmp/openresty-${RESTY_VERSION} \
+    && git clone https://github.com/aperezdc/ngx-fancyindex \
+    && eval ./configure -j${RESTY_J} ${RESTY_CONFIG_OPTIONS} \
+    && make -j${RESTY_J} \
+    && make -j${RESTY_J} install \
+    && cd /tmp \
+    && rm -rf \
+    openresty-${RESTY_VERSION}.tar.gz openresty-${RESTY_VERSION} \
+    && mkdir -p /var/run/openresty
+
+RUN ln -sf /dev/stdout /usr/local/openresty/nginx/logs/access.log
+RUN ln -sf /dev/stderr /usr/local/openresty/nginx/logs/error.log
+
+# Add additional binaries into PATH for convenience
+ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/usr/local/openresty/bin
 
 RUN luarocks install lua-resty-http
 RUN luarocks install lua-cjson
 
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY nginx.py /srv/nginx.py
 
-EXPOSE 8080
+EXPOSE 8000
 
-CMD /usr/bin/python /srv/nginx.py
+CMD /usr/bin/python3 /srv/nginx.py
+
+# Use SIGQUIT instead of default SIGTERM to cleanly drain requests
+# See https://github.com/openresty/docker-openresty/blob/master/README.md#tips--pitfalls
+STOPSIGNAL SIGQUIT
