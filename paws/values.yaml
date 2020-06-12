@@ -43,9 +43,25 @@ jupyterhub:
     - name: dumps
       hostPath:
         path: /public/dumps
+    # Without this, dumps becomes inaccessible and can hang the host
+    - name: dumps-src1
+      hostPath:
+        path: /mnt/nfs/dumps-labstore1007.wikimedia.org
+        type: Directory
+    - name: dumps-src2
+      hostPath:
+        path: /mnt/nfs/dumps-labstore1006.wikimedia.org
+        type: Directory
     extraVolumeMounts:
     - name: dumps
       mountPath: /public/dumps
+      readOnly: true
+    - name: dumps-src1
+      mountPath: /mnt/nfs/dumps-labstore1007.wikimedia.org
+      readOnly: true
+    - name: dumps-src2
+      mountPath: /mnt/nfs/dumps-labstore1006.wikimedia.org
+      readOnly: true
     extraConfig: 
       myConfig: |
           import hmac
