@@ -148,9 +148,15 @@ jupyterhub:
     enabled: false
   singleuser: 
     fsGid: 52771
-    image: 
+    image:
       name: singleuser-paws
       tag: latest
+    memory:
+      guarantee: 1G
+      limit: 3G
+    cpu:
+      guarantee: .5
+      limit: 1
     storage: 
       type: none
     uid: 52771
