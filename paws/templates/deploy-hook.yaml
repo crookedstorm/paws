@@ -297,35 +297,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: deploy-hook
+  name: {{ .Values.deployHook.service.name }}
 spec:
   type: NodePort
   ports:
-  - port: 8888
+  - port: {{ .Values.deployHook.service.port }}
     protocol: TCP
-    targetPort: 8888
+    targetPort: {{ .Values.deployHook.service.port }}
     {{ if .Values.deployHook.service.ports.nodePort -}}
     nodePort: {{ .Values.deployHook.service.ports.nodePort }}
     {{- end }}
   selector:
     name: deploy-hook
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: deploy-hook
-  annotations:
-    kubernetes.io/tls-acme: "true"
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            backend:
-              serviceName: deploy-hook
-              servicePort: 8888
-      host: {{ .Values.deployHook.host }}
-  tls:
-    - secretName: kubelego-deploy-hook-{{ .Release.Name }}
-      hosts:
-        - {{ .Values.deployHook.host }}

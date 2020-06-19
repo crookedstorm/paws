@@ -14,8 +14,10 @@ deployHook:
     name: deploy-hook
     # deployHook.image.template safely defines image:tag name in yaml
     template: "{{ .Values.deployHook.image.name }}:{{ .Values.deployHook.image.tag }}"
-  service: 
-    ports: 
+  service:
+    name: deploy-hook
+    ports:
+      port: 8888
       nodePort: 32612
     type: NodePort
 jupyterhub: 
@@ -145,6 +147,7 @@ jupyterhub:
       tag: 327c757e3d3b
     uid: 52771
   ingress: 
+    # this is the internal jupyterhub ingress, we don't use it
     enabled: false
   singleuser: 
     fsGid: 52771
@@ -177,3 +180,41 @@ jupyterhub:
 mysql: 
   host: enwiki.analytics.db.svc.eqiad.wmflabs
   username: s52771
+
+# config value for the ingress setup
+ingress:
+  ns: ingress-nginx
+  app: ingress-nginx
+  serviceAccount: nginx-ingress
+  clusterRole: nginx-ingress
+  role: nginx-ingress
+  roleBinding: nginx-ingress
+  clusterRoleBinding: nginx-ingress
+  service:
+    name: ingress-nginx
+    port: 30000
+  deployment:
+    name: nginx-ingress
+    replicas: 2
+    taint:
+      key: kubernetes.io/role
+      value: ingress
+    tolerations:
+      key: ingress
+    container:
+      name: nginx-ingress-controller
+      img: docker-registry.tools.wmflabs.org/nginx-ingress-controller:0.25.1
+      httpPort: 8080
+      metricsPort: 10254
+  hub:
+    name: hub
+    ns: prod
+    serviceName: hub
+    servicePort: 8081
+    wmcloud: paws.wmcloud.org
+    wmflabs: paws.wmflabs.org
+  deployHook:
+    name: deploy-hook
+    ns: prod
+    wmcloud: deploy-hook.paws.wmcloud.org
+    wmflabs: deploy-hook.paws.wmflabs.org
