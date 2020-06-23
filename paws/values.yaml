@@ -35,7 +35,7 @@ jupyterhub:
         - Zhuyifei1999
     type: mediawiki
   hub: 
-    baseUrl: /paws/
+    baseUrl: /
     db: 
       type: mysql
       upgrade: true
