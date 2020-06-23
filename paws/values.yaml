@@ -89,7 +89,6 @@ jupyterhub:
                   # Since otherwise the volumes list will grow each time
                   # the spawner stops and starts!
                   homedir = '/data/project/paws/userhomes/{}'.format(identity['sub'])
-                  dumps_src1 = '/mnt/nfs/' + os.readlink('/public/dumps/incr').split('/')[3]
                   spawner.volumes = [
                       {
                           'name': 'home',
