@@ -89,6 +89,7 @@ jupyterhub:
                   # Since otherwise the volumes list will grow each time
                   # the spawner stops and starts!
                   homedir = '/data/project/paws/userhomes/{}'.format(identity['sub'])
+                  spawner.privileged = False
                   spawner.volumes = [
                       {
                           'name': 'home',
@@ -114,15 +115,20 @@ jupyterhub:
                       },
                       {
                           'name': 'dumps',
-                          'mountPath': '/public/dumps'
+                          'mountPath': '/public/dumps',
+                          'readOnly': True
                       },
                       {
                           'name': 'dumps-src1',
-                          'mountPath': '/mnt/nfs/dumps-labstore1007.wikimedia.org'
+                          'mountPath': '/mnt/nfs/dumps-labstore1007.wikimedia.org',
+                          'readOnly': True
+
                       },
                       {
                           'name': 'dumps-src2',
-                          'mountPath': '/mnt/nfs/dumps-labstore1006.wikimedia.org'
+                          'mountPath': '/mnt/nfs/dumps-labstore1006.wikimedia.org',
+                          'readOnly': True
+
                       },
                   ]
           
@@ -135,7 +141,8 @@ jupyterhub:
                   spawner.environment['MYSQL_USERNAME'] = identity['username']
                   spawner.environment['MYSQL_PASSWORD'] = mysql_password
           c.KubeSpawner.singleuser_fs_gid = 52771
-          
+          c.KubeSpawner.singleuser_gid = 52771
+          c.KubeSpawner.singleuser_uid = 52771          
           c.JupyterHub.authenticator_class = Auth
           c.JupyterHub.logo_file = '/srv/jupyterhub/PAWS.svg'
           c.JupyterHub.template_vars = {
