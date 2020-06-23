@@ -89,7 +89,7 @@ jupyterhub:
                   # Since otherwise the volumes list will grow each time
                   # the spawner stops and starts!
                   homedir = '/data/project/paws/userhomes/{}'.format(identity['sub'])
-                  dumps_mnt = '/mnt/nfs/' + os.readlink('/public/dumps/incr').split('/')[3]
+                  dumps_src1 = '/mnt/nfs/' + os.readlink('/public/dumps/incr').split('/')[3]
                   spawner.volumes = [
                       {
                           'name': 'home',
@@ -100,8 +100,12 @@ jupyterhub:
                           'hostPath': { 'path': '/public/dumps' }
                       },
                       {
-                          'name': 'dumps-mnt',
-                          'hostPath': { 'path': dumps_mnt }
+                          'name': 'dumps-src1',
+                          'hostPath': { 'path': '/mnt/nfs/dumps-labstore1007.wikimedia.org' }
+                      },
+                      {
+                          'name': 'dumps-src2',
+                          'hostPath': { 'path': '/mnt/nfs/dumps-labstore1006.wikimedia.org' }
                       }
                   ]
                   spawner.volume_mounts = [
@@ -114,9 +118,13 @@ jupyterhub:
                           'mountPath': '/public/dumps'
                       },
                       {
-                          'name': 'dumps-mnt',
-                          'mountPath': dumps_mnt
-                      }
+                          'name': 'dumps-src1',
+                          'mountPath': '/mnt/nfs/dumps-labstore1007.wikimedia.org'
+                      },
+                      {
+                          'name': 'dumps-src2',
+                          'mountPath': '/mnt/nfs/dumps-labstore1006.wikimedia.org'
+                      },
                   ]
           
                   spawner.environment['MYSQL_HOST'] = os.environ['MYSQL_SERVICE_HOST']
