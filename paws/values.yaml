@@ -7,7 +7,7 @@ dbProxy:
     # dbProxy.image.template safely defines image:tag name in yaml
     template: "{{ .Values.dbProxy.image.name}}:{{.Values.dbProxy.image.tag }}"
 deployHook: 
-  host: paws-deploy-hook.tools.wmflabs.org
+  host: deploy-hook.paws.wmcloud.org
   # serviceAccount is the account that has the privileges to deploy PAWS
   serviceAccount: deploy
   image:
