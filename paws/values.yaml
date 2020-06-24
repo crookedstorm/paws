@@ -14,10 +14,10 @@ deployHook:
     name: deploy-hook
     # deployHook.image.template safely defines image:tag name in yaml
     template: "{{ .Values.deployHook.image.name }}:{{ .Values.deployHook.image.tag }}"
-  service: 
-    ports: 
-      nodePort: 32612
-    type: NodePort
+  # service: 
+  #   ports:
+  #     nodePort: 32612
+  #   type: NodePort
 jupyterhub: 
   proxy: 
     service: 
@@ -163,7 +163,9 @@ jupyterhub:
       tag: 327c757e3d3b
     uid: 52771
   ingress: 
-    enabled: false
+    enabled: true
+    hosts:
+      - paws.wmcloud.org
   # We are not on an autoscaling cluster, so we don't want this
   scheduling:
     userScheduler:
