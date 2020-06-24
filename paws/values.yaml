@@ -18,8 +18,8 @@ deployHook:
   #   ports:
   #     nodePort: 32612
   #   type: NodePort
-    service:
-      type: ClusterIP
+  service:
+    type: ClusterIP
 jupyterhub: 
   proxy: 
     service: 
