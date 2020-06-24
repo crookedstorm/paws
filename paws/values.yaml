@@ -35,11 +35,13 @@ jupyterhub:
         - Zhuyifei1999
     type: mediawiki
   hub: 
-    baseUrl: /
     db: 
       type: mysql
       upgrade: true
     extraVolumes:
+    - name: homes
+      hostPath:
+        path: /data/project
     - name: dumps
       hostPath:
         path: /public/dumps
@@ -53,6 +55,8 @@ jupyterhub:
         path: /mnt/nfs/dumps-labstore1006.wikimedia.org
         type: Directory
     extraVolumeMounts:
+    - name: homes
+      mountPath: /data/project
     - name: dumps
       mountPath: /public/dumps
       readOnly: true
@@ -89,7 +93,8 @@ jupyterhub:
                   # Since otherwise the volumes list will grow each time
                   # the spawner stops and starts!
                   homedir = '/data/project/paws/userhomes/{}'.format(identity['sub'])
-                  spawner.privileged = False
+                  # Create the homedir so docker doesn't do it as root
+                  os.makedirs(homedir, mode=0o755, exist_ok=True)
                   spawner.volumes = [
                       {
                           'name': 'home',
@@ -140,9 +145,7 @@ jupyterhub:
                   ).hexdigest()
                   spawner.environment['MYSQL_USERNAME'] = identity['username']
                   spawner.environment['MYSQL_PASSWORD'] = mysql_password
-          c.KubeSpawner.singleuser_fs_gid = 52771
-          c.KubeSpawner.singleuser_gid = 52771
-          c.KubeSpawner.singleuser_uid = 52771          
+     
           c.JupyterHub.authenticator_class = Auth
           c.JupyterHub.logo_file = '/srv/jupyterhub/PAWS.svg'
           c.JupyterHub.template_vars = {
@@ -154,13 +157,18 @@ jupyterhub:
     extraEnv: 
       USER: tools.paws
     fsGid: 52771
+    gid: 52771
     image:
       name: paws-hub-local
       tag: 327c757e3d3b
     uid: 52771
   ingress: 
     enabled: false
-  singleuser: 
+  # We are not on an autoscaling cluster, so we don't want this
+  scheduling:
+    userScheduler:
+      enabled: false
+  singleuser:
     fsGid: 52771
     image:
       name: singleuser-paws
@@ -174,19 +182,13 @@ jupyterhub:
     storage: 
       type: none
     uid: 52771
+    gid: 52771
+    cloudMetadata: true
     lifecycleHooks:
       postStart:
         exec:
           command: ["sh", "-c", "cd /srv/paws/pwb && git fetch -t && git checkout stable || exit 0"]
-    initContainers:
-      - name: chown-userhome
-        image: busybox
-        command: ['chown', '52771:52771', '/home/paws']
-        volumeMounts:
-          - name: home
-            mountPath: /home/paws
-        securityContext: 
-          runAsUser: 0
+
 # mysql configures the wiki replica backend variables
 mysql: 
   host: enwiki.analytics.db.svc.eqiad.wmflabs

@@ -6,8 +6,8 @@ metadata:
     seccomp.security.alpha.kubernetes.io/defaultProfileName: runtime/default
   name: paws-psp
 spec:
-  allowedCapabilities:
-    - NET_ADMIN
+  requiredDropCapabilities:
+    - ALL
   allowPrivilegeEscalation: false
   fsGroup:
     rule: 'MustRunAs'
