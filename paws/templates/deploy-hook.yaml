@@ -299,14 +299,12 @@ kind: Service
 metadata:
   name: deploy-hook
 spec:
-  {{ if .Values.deployHook.service.ports.nodePort -}}
-  type: NodePort
-  {{- end }}
+  type: {{ .Values.deployHook.service.type }}
   ports:
   - port: 8888
     protocol: TCP
     targetPort: 8888
-    {{ if .Values.deployHook.service.ports.nodePort -}}
+    {{ if eq .Values.deployHook.service.type "NodePort" -}}
     nodePort: {{ .Values.deployHook.service.ports.nodePort }}
     {{- end }}
   selector:
