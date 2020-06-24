@@ -185,7 +185,9 @@ jupyterhub:
       type: none
     uid: 52771
     gid: 52771
-    cloudMetadata: true
+    # This must be enabled or it cannot work with restrictive PSP
+    cloudMetadata: 
+      enabled: true
     lifecycleHooks:
       postStart:
         exec:
