@@ -11,8 +11,8 @@ pawsPublicEnabled: true
 pawspublic:
   nbserve:
     image:
-      name: docker-registry.tools.wmflabs.org/paws-public-nginx
-      tag: openresty
+      name: quay.io/brookestorm/nbserve
+      tag: pathtest
       # pawspublic.nbserve.image.template safely defines image:tag name in yaml
       template: "{{ .Values.pawspublic.nbserve.image.name}}:{{.Values.pawspublic.nbserve.image.tag }}"
     replicas: 1
