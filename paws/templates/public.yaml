@@ -54,7 +54,7 @@ spec:
         - name: BASE_PATH
           value: /data/project/paws/userhomes/
         - name: URL_PREFIX
-          value: /paws-public/
+          value: /
         image: {{ tpl .Values.pawspublic.renderer.image.template . | quote }}
         imagePullPolicy: Always
         name: renderer
@@ -99,27 +99,6 @@ spec:
     targetPort: 8000
   selector:
     name: renderer
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite ^(/paws-public)$ $1/ redirect;
-    nginx.ingress.kubernetes.io/rewrite-target: /paws-public/$2
-  labels:
-    name: paws-public
-    toolforge: tool
-  name: paws-public-legacy
-spec:
-  rules:
-  - host: {{ .Values.pawspublic.ingress.host | quote }}
-    http:
-      paths:
-      - backend:
-          serviceName: paws-public
-          servicePort: 8000
-        path: /paws-public(/|$)(.*)
 ---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
