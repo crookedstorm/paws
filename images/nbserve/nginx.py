@@ -104,14 +104,14 @@ http {
             index index.html index.ipynb Index.ipynb;
             fancyindex on;
 
-            alias /data/project/paws/userhomes;
+            alias /data/project/paws/userhomes/;
         }
 
 
     location /accelredir {
             internal;
 
-            alias /data/project/paws/userhomes;
+            alias /data/project/paws/userhomes/;
         }
 
         location /User: {
