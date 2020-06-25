@@ -83,24 +83,24 @@ http {
     server {
         listen 0.0.0.0:8000;
 
-        location ~ \/\. {
-            deny all;
-        }
+        # location ~ \/\. {
+        #     deny all;
+        # }
 
         # No port numbes in redirects
         port_in_redirect off;
 
-        location ~ ^/paws-public/user/([^/]+)/notebooks/(.*)$ {
-            rewrite /paws-public/user/([^/]+)/notebooks/(.*)$ /paws-public/User:$1/$2 permanent;
+        location ~ ^/user/([^/]+)/notebooks/(.*)$ {
+            rewrite /user/([^/]+)/notebooks/(.*)$ /User:$1/$2 permanent;
         }
 
         # Only after the User: redirect! Otherwise our backend can't find the file.
-        location ~ ^/paws-public/\d+/.*\.ipynb$ {
+        location ~ ^/\d+/.*\.ipynb$ {
             include /usr/local/openresty/nginx/conf/uwsgi_params;
             uwsgi_pass uwsgi://%s:8000;
         }
 
-        location /paws-public {
+        location / {
             index index.html index.ipynb Index.ipynb;
             fancyindex on;
 
@@ -114,9 +114,9 @@ http {
             alias /data/project/paws/userhomes;
         }
 
-        location /paws-public/User: {
+        location /User: {
             rewrite_by_lua '
-                local m = ngx.re.match(ngx.var.uri, "/paws-public/User:([^/]+)(.*)");
+                local m = ngx.re.match(ngx.var.uri, "/User:([^/]+)(.*)");
                 if m then
                     local userid = ngx.shared.usernamemapping:get(m[1]);
                     if userid == nil then
@@ -139,7 +139,7 @@ http {
 
                         ngx.shared.usernamemapping:set(m[1], userid);
                     end
-                    ngx.req.set_uri("/paws-public/" .. userid  .. m[2], true);
+                    ngx.req.set_uri("/" .. userid  .. m[2], true);
                 end
             ';
 
