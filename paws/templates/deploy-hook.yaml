@@ -1,3 +1,4 @@
+{{ if .Values.deployHook.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -329,3 +330,4 @@ spec:
     - secretName: kubelego-deploy-hook-{{ .Release.Name }}
       hosts:
         - {{ .Values.deployHook.host }}
+{{ end }}
