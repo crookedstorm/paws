@@ -6,6 +6,25 @@ dbProxy:
     name: db-proxy
     # dbProxy.image.template safely defines image:tag name in yaml
     template: "{{ .Values.dbProxy.image.name}}:{{.Values.dbProxy.image.tag }}"
+# pawsPublicEnabled enables the anonymous viewing service for notebooks
+pawsPublicEnabled: true
+pawspublic:
+  nbserve:
+    image:
+      name: docker-registry.tools.wmflabs.org/paws-public-nginx
+      tag: openresty
+      # pawspublic.nbserve.image.template safely defines image:tag name in yaml
+      template: "{{ .Values.pawspublic.nbserve.image.name}}:{{.Values.pawspublic.nbserve.image.tag }}"
+    replicas: 1
+  renderer:
+    image:
+      name: docker-registry.tools.wmflabs.org/toolforge-paws-public-renderer
+      tag: latest
+      # pawspublic.nbserve.image.template safely defines image:tag name in yaml
+      template: "{{ .Values.pawspublic.renderer.image.name}}:{{.Values.pawspublic.renderer.image.tag }}"
+    replicas: 1
+  ingress:
+    host: public.paws.wmcloud.org
 deployHook: 
   host: deploy-hook.paws.wmcloud.org
   # serviceAccount is the account that has the privileges to deploy PAWS
