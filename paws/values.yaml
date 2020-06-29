@@ -31,6 +31,8 @@ deployHook:
   host: deploy-hook.paws.wmcloud.org
   # serviceAccount is the account that has the privileges to deploy PAWS
   serviceAccount: deploy
+  # Use kube-lego or cert-manager for tls
+  tls: false
   image:
     name: deploy-hook
     # deployHook.image.template safely defines image:tag name in yaml

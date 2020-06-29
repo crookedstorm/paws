@@ -315,8 +315,10 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: deploy-hook
+  {{ if .Values.deployHook.tls }}
   annotations:
     kubernetes.io/tls-acme: "true"
+  {{ end }}
 spec:
   rules:
     - http:
@@ -326,8 +328,10 @@ spec:
               serviceName: deploy-hook
               servicePort: 8888
       host: {{ .Values.deployHook.host }}
+  {{ if .Values.deployHook.tls }}
   tls:
     - secretName: kubelego-deploy-hook-{{ .Release.Name }}
       hosts:
         - {{ .Values.deployHook.host }}
+  {{ end }}
 {{ end }}
