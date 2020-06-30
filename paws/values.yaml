@@ -25,6 +25,10 @@ pawspublic:
     replicas: 1
   ingress:
     host: public.paws.wmcloud.org
+    legacyHost: paws-public.wmflabs.org
+paws:
+  ingress:
+    legacyHost: paws.wmflabs.org
 deployHook:
   # deployHook.enabled determines if we are running hte deployhook or not
   enabled: False

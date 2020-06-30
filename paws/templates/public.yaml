@@ -105,7 +105,7 @@ kind: Ingress
 metadata:
   labels:
     name: paws-public-custom
-    toolforge: tool
+    ingress.paws.wmcloud.org: public
   name: paws-public-custom
 spec:
   rules:
