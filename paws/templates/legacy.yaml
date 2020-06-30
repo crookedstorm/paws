@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    name: paws-public-legacy
+    toolforge: tool
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite /paws-public(/|$)*(.*) $scheme://public.paws.wmcloud.org/$2 redirect;
+  name: paws-public-legacy
+spec:
+  rules:
+  - host: {{ .Values.pawspublic.ingress.legacyHost | quote }}
+    http:
+
+      paths:
+      # The backend portion is just there for the validator. It isn't used.
+      - backend:
+          serviceName: paws-public
+          servicePort: 8000
+        path: /paws-public(/|$)*(.*)
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    name: paws-legacy
+    toolforge: tool
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite /paws(/|$)*(.*) $scheme://hub.paws.wmcloud.org/$2 redirect;
+  name: paws-legacy
+spec:
+  rules:
+  - host: {{ .Values.pawspublic.ingress.legacyHost | quote }}
+    http:
+      paths:
+      # The backend portion is just there for the validator. It isn't used.
+      - backend:
+          serviceName: paws-public
+          servicePort: 8000
+        path: /paws(/|$)*(.*)
