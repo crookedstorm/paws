@@ -30,7 +30,7 @@ metadata:
   name: paws-legacy
 spec:
   rules:
-  - host: {{ .Values.pawspublic.ingress.legacyHost | quote }}
+  - host: {{ .Values.paws.ingress.legacyHost | quote }}
     http:
       paths:
       # The backend portion is just there for the validator. It isn't used.
