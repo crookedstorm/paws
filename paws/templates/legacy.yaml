@@ -26,7 +26,7 @@ metadata:
     name: paws-legacy
     ingress.paws.wmcloud.org: legacy
   annotations:
-    nginx.ingress.kubernetes.io/temporal-redirect: $scheme://{{ index .Values.jupyterhub.hub.ingress.hosts 0 }}/$2
+    nginx.ingress.kubernetes.io/temporal-redirect: $scheme://{{ index .Values.jupyterhub.ingress.hosts 0 }}/$2
   name: paws-legacy
 spec:
   rules:
