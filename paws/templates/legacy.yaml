@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   labels:
     name: paws-public-legacy
-    toolforge: tool
+    ingress.paws.wmcloud.org: legacy
   annotations:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       rewrite /paws-public(/|$)*(.*) $scheme://public.paws.wmcloud.org/$2 redirect;
@@ -25,7 +25,7 @@ kind: Ingress
 metadata:
   labels:
     name: paws-legacy
-    toolforge: tool
+    ingress.paws.wmcloud.org: legacy
   annotations:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       rewrite /paws(/|$)*(.*) $scheme://hub.paws.wmcloud.org/$2 redirect;
