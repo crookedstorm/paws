@@ -5,8 +5,7 @@ metadata:
     name: paws-public-legacy
     ingress.paws.wmcloud.org: legacy
   annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite /paws-public(/|$)*(.*) $scheme://public.paws.wmcloud.org/$2 redirect;
+    nginx.ingress.kubernetes.io/temporal-redirect: $scheme://{{ .Values.pawspublic.ingress.host }}/$2
   name: paws-public-legacy
 spec:
   rules:
@@ -27,8 +26,7 @@ metadata:
     name: paws-legacy
     ingress.paws.wmcloud.org: legacy
   annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite /paws(/|$)*(.*) $scheme://hub.paws.wmcloud.org/$2 redirect;
+    nginx.ingress.kubernetes.io/temporal-redirect: $scheme://{{ index .Values.jupyterhub.hub.ingress.hosts 0 }}/$2
   name: paws-legacy
 spec:
   rules:
