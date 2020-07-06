@@ -27,15 +27,21 @@ pawspublic:
     host: public.paws.wmcloud.org
     legacyHost: paws-public.wmflabs.org
 paws:
+  # frontPageEnabled switches the URL path of / to a redirect to paws.ingress.frontRedirect
+  frontPageEnabled: true
   ingress:
     legacyHost: paws.wmflabs.org
+    # paws.ingress.frontHost should be the domain the URL path of / uses to redirect to docs
+    frontHost: paws.wmcloud.org
+    # paws.ingress.frontRedirect should be the destination for URL path of / at paws.ingress.frontHost
+    frontRedirect: https://wikitech.wikimedia.org/wiki/PAWS
 deployHook:
   # deployHook.enabled determines if we are running hte deployhook or not
   enabled: False
   host: deploy-hook.paws.wmcloud.org
   # serviceAccount is the account that has the privileges to deploy PAWS
   serviceAccount: deploy
-  # Use kube-lego or cert-manager for tls
+  # deployHook.tls controls using kube-lego or cert-manager for tls
   tls: false
   image:
     name: deploy-hook
