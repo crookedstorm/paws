@@ -139,7 +139,7 @@ http {
 
                         ngx.shared.usernamemapping:set(m[1], userid);
                     end
-                    ngx.req.set_uri("/" .. userid  .. m[2], true);
+                    ngx.req.set_uri("/" .. userid  .. ngx.escape_uri(m[2], 0), true);
                 end
             ';
 
